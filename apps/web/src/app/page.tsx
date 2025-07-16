@@ -36,8 +36,8 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
+    <div className="h-screen bg-background flex flex-col">
+      <header className="border-b flex-shrink-0">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold">BasicTodo</h1>
           <div className="flex items-center gap-4">
@@ -51,12 +51,12 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <main className="container mx-auto px-4 py-8 flex-1 min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
           {/* Task List */}
-          <div className="lg:col-span-3">
-            <Card>
-              <CardHeader>
+          <div className="lg:col-span-3 flex flex-col min-h-0">
+            <Card className="flex flex-col h-full">
+              <CardHeader className="flex-shrink-0">
                 <div className="flex justify-between items-center">
                   <div>
                     <CardTitle>Your Tasks</CardTitle>
@@ -67,22 +67,24 @@ export default function HomePage() {
                   <TaskForm onTaskCreated={handleTaskCreated} />
                 </div>
               </CardHeader>
-              <CardContent>
-                <TaskList refreshTrigger={refreshTrigger} />
+              <CardContent className="flex-1 min-h-0 overflow-hidden">
+                <div className="h-full overflow-y-auto pr-2">
+                  <TaskList refreshTrigger={refreshTrigger} />
+                </div>
               </CardContent>
             </Card>
           </div>
 
           {/* AI Chat Sidebar */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
+          <div className="lg:col-span-1 flex flex-col min-h-0">
+            <Card className="flex flex-col h-full">
+              <CardHeader className="flex-shrink-0">
                 <CardTitle>AI Assistant</CardTitle>
                 <CardDescription>
                   Chat with AI to manage your tasks
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-1 min-h-0">
                 <div className="text-center py-8 text-muted-foreground">
                   <p>AI chat coming soon...</p>
                 </div>
