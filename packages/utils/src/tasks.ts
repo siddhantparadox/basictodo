@@ -26,7 +26,22 @@ export async function listTasks(
 ): Promise<Task[]> {
   let query = supabase
     .from('tasks')
-    .select('*');
+    .select(`
+      id,
+      user_id,
+      title,
+      description,
+      due_at,
+      status,
+      priority,
+      category,
+      tags,
+      estimated_duration_minutes,
+      notes,
+      created_at,
+      updated_at,
+      last_reminder_sent
+    `);
 
   // Apply filters
   if (options?.status) {
@@ -97,8 +112,14 @@ export async function createTask(
     .from('tasks')
     .insert({
       title: validatedInput.title,
+      description: validatedInput.description || null,
       due_at: validatedInput.due_at || null,
       status: 'pending' as const,
+      priority: validatedInput.priority || null,
+      category: validatedInput.category || null,
+      tags: validatedInput.tags || null,
+      estimated_duration_minutes: validatedInput.estimated_duration_minutes || null,
+      notes: validatedInput.notes || null,
       user_id: user.id,
     })
     .select()

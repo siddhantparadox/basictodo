@@ -1,18 +1,30 @@
 import { z } from 'zod';
 
-// Task status enum matching database
+// Task enums matching database
 export const TaskStatus = z.enum(['pending', 'done']);
+export const TaskPriority = z.enum(['low', 'medium', 'high', 'urgent']);
+export const TaskCategory = z.enum(['personal', 'work', 'health', 'finance', 'education', 'shopping', 'other']);
+
 export type TaskStatus = z.infer<typeof TaskStatus>;
+export type TaskPriority = z.infer<typeof TaskPriority>;
+export type TaskCategory = z.infer<typeof TaskCategory>;
 
 // Base task schema
 export const TaskSchema = z.object({
   id: z.string().uuid(),
   user_id: z.string().uuid(),
   title: z.string().min(1, 'Task title is required').max(500, 'Task title too long'),
+  description: z.string().nullable(),
   due_at: z.string().datetime().nullable(),
   status: TaskStatus,
+  priority: TaskPriority.nullable(),
+  category: TaskCategory.nullable(),
+  tags: z.array(z.string()).nullable(),
+  estimated_duration_minutes: z.number().int().nullable(),
+  notes: z.string().nullable(),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
+  last_reminder_sent: z.string().datetime().nullable(),
 });
 
 export type Task = z.infer<typeof TaskSchema>;
@@ -20,11 +32,17 @@ export type Task = z.infer<typeof TaskSchema>;
 // Task creation schema (for API inputs)
 export const CreateTaskSchema = z.object({
   title: z.string().min(1, 'Task title is required').max(500, 'Task title too long'),
+  description: z.string().optional(),
   due_at: z.union([
     z.string().datetime(), // ISO datetime string
     z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, 'Invalid datetime format'), // datetime-local format
     z.null()
   ]).optional(),
+  priority: TaskPriority.optional(),
+  category: TaskCategory.optional(),
+  tags: z.array(z.string()).optional(),
+  estimated_duration_minutes: z.number().int().min(1).max(1440).optional().or(z.nan().transform(() => undefined)), // 1 minute to 24 hours
+  notes: z.string().optional(),
 });
 
 export type CreateTaskInput = z.infer<typeof CreateTaskSchema>;
@@ -32,12 +50,18 @@ export type CreateTaskInput = z.infer<typeof CreateTaskSchema>;
 // Task update schema (for API inputs)
 export const UpdateTaskSchema = z.object({
   title: z.string().min(1, 'Task title is required').max(500, 'Task title too long').optional(),
+  description: z.string().optional(),
   due_at: z.union([
     z.string().datetime(), // ISO datetime string
     z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, 'Invalid datetime format'), // datetime-local format
     z.null()
   ]).optional(),
   status: TaskStatus.optional(),
+  priority: TaskPriority.optional(),
+  category: TaskCategory.optional(),
+  tags: z.array(z.string()).optional(),
+  estimated_duration_minutes: z.number().int().min(1).max(1440).optional().or(z.nan().transform(() => undefined)),
+  notes: z.string().optional(),
 });
 
 export type UpdateTaskInput = z.infer<typeof UpdateTaskSchema>;
