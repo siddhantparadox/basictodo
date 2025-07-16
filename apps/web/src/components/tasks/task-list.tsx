@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Trash2, Calendar, Clock } from "lucide-react"
 import { supabase, listTasks, updateTask, deleteTask } from "@basictodo/utils"
 import { Task, TaskStatus } from "@basictodo/utils"
@@ -122,54 +123,98 @@ export function TaskList({ refreshTrigger }: TaskListProps) {
     )
   }
 
-  return (
-    <div className="space-y-3">
-      {tasks.map((task) => {
-        const dueInfo = formatDueDate(task.due_at)
-        const isCompleted = task.status === 'done'
-        
-        return (
-          <Card key={task.id} className={`transition-all ${isCompleted ? 'opacity-60' : ''}`}>
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <Checkbox
-                  checked={isCompleted}
-                  onCheckedChange={() => handleToggleStatus(task.id, task.status)}
-                  className="mt-1"
-                />
+  const pendingTasks = tasks.filter(task => task.status === 'pending')
+  const completedTasks = tasks.filter(task => task.status === 'done')
+
+  const renderTask = (task: Task) => {
+    const dueInfo = formatDueDate(task.due_at)
+    const isCompleted = task.status === 'done'
+    
+    return (
+      <Card key={task.id} className={`transition-all ${isCompleted ? 'opacity-60' : ''}`}>
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <Checkbox
+              checked={isCompleted}
+              onCheckedChange={() => handleToggleStatus(task.id, task.status)}
+              className="mt-1"
+            />
+            
+            <div className="flex-1 min-w-0">
+              <h3 className={`font-medium ${isCompleted ? 'line-through text-gray-500' : ''}`}>
+                {task.title}
+              </h3>
+              
+              <div className="flex items-center gap-2 mt-2">
+                {dueInfo && !isCompleted && (
+                  <Badge variant={dueInfo.variant} className="text-xs">
+                    <Clock className="h-3 w-3 mr-1" />
+                    {dueInfo.text}
+                  </Badge>
+                )}
                 
-                <div className="flex-1 min-w-0">
-                  <h3 className={`font-medium ${isCompleted ? 'line-through text-gray-500' : ''}`}>
-                    {task.title}
-                  </h3>
-                  
-                  <div className="flex items-center gap-2 mt-2">
-                    {dueInfo && (
-                      <Badge variant={dueInfo.variant} className="text-xs">
-                        <Clock className="h-3 w-3 mr-1" />
-                        {dueInfo.text}
-                      </Badge>
-                    )}
-                    
-                    <Badge variant={isCompleted ? "default" : "secondary"} className="text-xs">
-                      {isCompleted ? "Done" : "Pending"}
-                    </Badge>
-                  </div>
-                </div>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDeleteTask(task.id)}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <Badge variant={isCompleted ? "default" : "secondary"} className="text-xs">
+                  {isCompleted ? "Done" : "Pending"}
+                </Badge>
               </div>
-            </CardContent>
-          </Card>
-        )
-      })}
-    </div>
+            </div>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDeleteTask(task.id)}
+              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Tabs defaultValue="todos" className="h-full flex flex-col">
+      <TabsList className="grid w-full grid-cols-2 mb-4">
+        <TabsTrigger value="todos" className="flex items-center gap-2">
+          Todos
+          <Badge variant="secondary" className="text-xs">
+            {pendingTasks.length}
+          </Badge>
+        </TabsTrigger>
+        <TabsTrigger value="completed" className="flex items-center gap-2">
+          Completed
+          <Badge variant="default" className="text-xs">
+            {completedTasks.length}
+          </Badge>
+        </TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="todos" className="flex-1 mt-0 overflow-y-auto">
+        {pendingTasks.length === 0 ? (
+          <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
+            <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No pending tasks. Great job!</p>
+          </div>
+        ) : (
+          <div className="space-y-3 pr-2">
+            {pendingTasks.map(renderTask)}
+          </div>
+        )}
+      </TabsContent>
+      
+      <TabsContent value="completed" className="flex-1 mt-0 overflow-y-auto">
+        {completedTasks.length === 0 ? (
+          <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
+            <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No completed tasks yet.</p>
+          </div>
+        ) : (
+          <div className="space-y-3 pr-2">
+            {completedTasks.map(renderTask)}
+          </div>
+        )}
+      </TabsContent>
+    </Tabs>
   )
 }
