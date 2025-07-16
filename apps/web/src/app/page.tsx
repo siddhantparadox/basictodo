@@ -5,6 +5,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { AuthForm } from "@/components/auth/auth-form"
 import { TaskForm } from "@/components/tasks/task-form"
 import { TaskList } from "@/components/tasks/task-list"
+import { AiChat } from "@/components/ai/ai-chat"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
@@ -84,10 +85,8 @@ export default function HomePage() {
                   Chat with AI to manage your tasks
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex-1 min-h-0">
-                <div className="text-center py-8 text-muted-foreground">
-                  <p>AI chat coming soon...</p>
-                </div>
+              <CardContent className="flex-1 min-h-0 p-0">
+                <AiChat onTasksChanged={handleTaskCreated} />
               </CardContent>
             </Card>
           </div>

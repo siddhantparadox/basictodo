@@ -265,7 +265,6 @@ export type TaskUpdate = TablesUpdate<'tasks'>
 export type TaskStatus = Enums<'task_status'>
 export type TaskPriority = Enums<'task_priority'>
 export type TaskCategory = Enums<'task_category'>
-
-export type Preferences = Tables<'preferences'>
-export type PreferencesInsert = TablesInsert<'preferences'>
-export type PreferencesUpdate = TablesUpdate<'preferences'>
+export type Preference = Tables<'preferences'>
+export type PreferenceInsert = TablesInsert<'preferences'>
+export type PreferenceUpdate = TablesUpdate<'preferences'>

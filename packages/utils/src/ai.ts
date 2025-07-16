@@ -21,10 +21,37 @@ const FUNCTION_SCHEMAS = [
           type: 'string',
           description: 'The title/description of the task',
         },
+        description: {
+          type: 'string',
+          description: 'Optional detailed description of the task',
+        },
         due_at: {
           type: 'string',
           format: 'date-time',
           description: 'Optional due date and time in ISO format',
+        },
+        priority: {
+          type: 'string',
+          enum: ['low', 'medium', 'high', 'urgent'],
+          description: 'Task priority level',
+        },
+        category: {
+          type: 'string',
+          enum: ['personal', 'work', 'health', 'finance', 'education', 'shopping', 'other'],
+          description: 'Task category',
+        },
+        tags: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Optional tags for the task',
+        },
+        estimated_duration_minutes: {
+          type: 'number',
+          description: 'Estimated duration in minutes',
+        },
+        notes: {
+          type: 'string',
+          description: 'Additional notes about the task',
         },
       },
       required: ['title'],
@@ -44,6 +71,10 @@ const FUNCTION_SCHEMAS = [
           type: 'string',
           description: 'New title for the task',
         },
+        description: {
+          type: 'string',
+          description: 'New detailed description of the task',
+        },
         status: {
           type: 'string',
           enum: ['pending', 'done'],
@@ -53,6 +84,29 @@ const FUNCTION_SCHEMAS = [
           type: 'string',
           format: 'date-time',
           description: 'New due date and time in ISO format',
+        },
+        priority: {
+          type: 'string',
+          enum: ['low', 'medium', 'high', 'urgent'],
+          description: 'New task priority level',
+        },
+        category: {
+          type: 'string',
+          enum: ['personal', 'work', 'health', 'finance', 'education', 'shopping', 'other'],
+          description: 'New task category',
+        },
+        tags: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'New tags for the task',
+        },
+        estimated_duration_minutes: {
+          type: 'number',
+          description: 'New estimated duration in minutes',
+        },
+        notes: {
+          type: 'string',
+          description: 'New additional notes about the task',
         },
       },
       required: ['task_id'],

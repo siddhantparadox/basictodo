@@ -67,7 +67,7 @@ export async function listTasks(
     throw new Error(`Failed to list tasks: ${error.message}`);
   }
 
-  return data || [];
+  return (data || []) as unknown as Task[];
 }
 
 /**
@@ -79,7 +79,22 @@ export async function getTask(
 ): Promise<Task | null> {
   const { data, error } = await supabase
     .from('tasks')
-    .select('*')
+    .select(`
+      id,
+      user_id,
+      title,
+      description,
+      due_at,
+      status,
+      priority,
+      category,
+      tags,
+      estimated_duration_minutes,
+      notes,
+      created_at,
+      updated_at,
+      last_reminder_sent
+    `)
     .eq('id', taskId)
     .single();
 
@@ -90,7 +105,7 @@ export async function getTask(
     throw new Error(`Failed to get task: ${error.message}`);
   }
 
-  return data;
+  return data as unknown as Task | null;
 }
 
 /**
@@ -129,7 +144,7 @@ export async function createTask(
     throw new Error(`Failed to create task: ${error.message}`);
   }
 
-  return data;
+  return data as unknown as Task;
 }
 
 /**
@@ -159,7 +174,7 @@ export async function updateTask(
     throw new Error(`Failed to update task: ${error.message}`);
   }
 
-  return data;
+  return data as unknown as Task;
 }
 
 /**
@@ -212,7 +227,22 @@ export async function getTasksDueWithin(
 
   const { data, error } = await supabase
     .from('tasks')
-    .select('*')
+    .select(`
+      id,
+      user_id,
+      title,
+      description,
+      due_at,
+      status,
+      priority,
+      category,
+      tags,
+      estimated_duration_minutes,
+      notes,
+      created_at,
+      updated_at,
+      last_reminder_sent
+    `)
     .eq('status', status)
     .not('due_at', 'is', null)
     .gte('due_at', now.toISOString())
@@ -223,7 +253,7 @@ export async function getTasksDueWithin(
     throw new Error(`Failed to get tasks due within ${minutes} minutes: ${error.message}`);
   }
 
-  return data || [];
+  return (data || []) as unknown as Task[];
 }
 
 /**
@@ -237,7 +267,22 @@ export async function getOverdueTasks(
 
   const { data, error } = await supabase
     .from('tasks')
-    .select('*')
+    .select(`
+      id,
+      user_id,
+      title,
+      description,
+      due_at,
+      status,
+      priority,
+      category,
+      tags,
+      estimated_duration_minutes,
+      notes,
+      created_at,
+      updated_at,
+      last_reminder_sent
+    `)
     .eq('status', status)
     .not('due_at', 'is', null)
     .lt('due_at', now.toISOString())
@@ -247,7 +292,7 @@ export async function getOverdueTasks(
     throw new Error(`Failed to get overdue tasks: ${error.message}`);
   }
 
-  return data || [];
+  return (data || []) as unknown as Task[];
 }
 
 /**
@@ -263,7 +308,22 @@ export async function getTodayTasks(
 
   let query = supabase
     .from('tasks')
-    .select('*')
+    .select(`
+      id,
+      user_id,
+      title,
+      description,
+      due_at,
+      status,
+      priority,
+      category,
+      tags,
+      estimated_duration_minutes,
+      notes,
+      created_at,
+      updated_at,
+      last_reminder_sent
+    `)
     .not('due_at', 'is', null)
     .gte('due_at', startOfDay.toISOString())
     .lt('due_at', endOfDay.toISOString());
@@ -280,7 +340,7 @@ export async function getTodayTasks(
     throw new Error(`Failed to get today's tasks: ${error.message}`);
   }
 
-  return data || [];
+  return (data || []) as unknown as Task[];
 }
 
 /**
@@ -296,7 +356,22 @@ export async function searchTasks(
 ): Promise<Task[]> {
   let query = supabase
     .from('tasks')
-    .select('*')
+    .select(`
+      id,
+      user_id,
+      title,
+      description,
+      due_at,
+      status,
+      priority,
+      category,
+      tags,
+      estimated_duration_minutes,
+      notes,
+      created_at,
+      updated_at,
+      last_reminder_sent
+    `)
     .ilike('title', `%${searchTerm}%`);
 
   if (options?.status) {
@@ -315,7 +390,7 @@ export async function searchTasks(
     throw new Error(`Failed to search tasks: ${error.message}`);
   }
 
-  return data || [];
+  return (data || []) as unknown as Task[];
 }
 
 /**
